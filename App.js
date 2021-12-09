@@ -8,18 +8,15 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
-import Routes from "./Routes";
 import { NavigationContainer } from "@react-navigation/native";
+import BottomTabs from "./components/BottomTabs";
 
 export default function App() {
   return (
     <NavigationContainer>
       <SafeAreaView style={{ flex: 1 }}>
-        {/* <StatusBar backgroundColor="red" /> */}
-        {/* <View style={styles.container}> */}
-        <Routes />
-        {/* <EmptyCard /> */}
-        {/* </View> */}
+        <StatusBar />
+        <BottomTabs />
       </SafeAreaView>
     </NavigationContainer>
   );

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { ScaledSheet, vs } from "react-native-size-matters";
 // import { useNavigate } from "react-router-native";
-import Decks from "../components/Decks";
+import Decks from "../../components/Decks";
 
-const DeckViews = () => {
+const HomeScreen = () => {
   return (
     <View style={[styles.container]}>
       <View style={styles.decks}>
@@ -15,7 +15,7 @@ const DeckViews = () => {
   );
 };
 
-export default DeckViews;
+export default HomeScreen;
 
 const styles = ScaledSheet.create({
   container: {

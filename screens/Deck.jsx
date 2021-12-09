@@ -1,88 +1,120 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { decks } from "../data";
+import { deleteDeck, getDeck, getDecks } from "../utils/api";
+import { Touchable } from "../utils";
+// import { decks } from "../data";
 
 const Deck = ({ route }) => {
   // console.log({ props });
+  const [deck, setDeck] = useState({});
   console.log(route);
   const { deckId } = route.params;
   console.log({ deckId });
 
-  const deckToShow = decks.find((deck) => deck.id === deckId);
+  useEffect(() => {
+    (async () => {
+      try {
+        const deckToShow = await getDeck(deckId);
+
+        setDeck(deckToShow);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  // const deckToShow = decks.find((deck) => deck.id === deckId);
+  const showDeck = Object.keys(deck).length !== 0;
 
   const navigation = useNavigation();
 
   const addCard = () => {
     return setCard(card + 1);
   };
+
+  const handleDeckDelete = async () => {
+    try {
+      await deleteDeck(deck.id);
+      navigation.navigate("home-screen");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   console.log(addCard);
   return (
-    <View>
-      <View style={style.Wrapper}>
-        <AntDesign
-          onPress={() => navigation.goBack()}
-          color="white"
-          size={24}
-          name="left"
-        />
-        <Text
-          style={{
-            fontSize: 20,
-            color: "white",
-            marginRight: 50,
-            fontWeight: "600",
-            textTransform: "capitalize",
-          }}
-        >
-          {deckToShow.title}
-        </Text>
+    <>
+      {showDeck && (
         <View>
-          <Text style={{ flex: 1 }}></Text>
-        </View>
-      </View>
-      <View style={style.container}>
-        <View>
-          <Text
-            style={{
-              fontWeight: "900",
-              fontSize: 30,
-              textTransform: "capitalize",
-            }}
-          >
-            {deckToShow.title}
-          </Text>
-          <Text style={{ fontSize: 20, textAlign: "center" }}>
-            {deckToShow.questions.length} CARD
-          </Text>
-        </View>
-        <View style={style.container}>
-          <TouchableOpacity
-            style={style.button}
-            onPress={() => {
-              navigation.navigate("add-card");
-            }}
-          >
-            <Text style={{ fontSize: 25 }}>Add Card</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={style.button1}>
+          <View style={style.Wrapper}>
+            <AntDesign
+              onPress={() => navigation.goBack()}
+              color="white"
+              size={24}
+              name="left"
+            />
             <Text
-              style={{ fontSize: 25, color: "white" }}
-              onPress={() => navigation.navigate("quiz")}
+              style={{
+                fontSize: 20,
+                color: "white",
+                marginRight: 50,
+                fontWeight: "600",
+                textTransform: "capitalize",
+              }}
             >
-              Start Quiz
+              {deck.title}
             </Text>
-          </TouchableOpacity>
-          <Text style={{ marginTop: 20, fontSize: 20, color: "red" }}>
-            Delete Deck
-          </Text>
+            <View>
+              <Text style={{ flex: 1 }}></Text>
+            </View>
+          </View>
+          <View style={style.container}>
+            <View>
+              <Text
+                style={{
+                  fontWeight: "900",
+                  fontSize: 30,
+                  textTransform: "capitalize",
+                }}
+              >
+                {deck.title}
+              </Text>
+              <Text style={{ fontSize: 20, textAlign: "center" }}>
+                {deck.questions.length} CARD
+              </Text>
+            </View>
+            <View style={style.container}>
+              <TouchableOpacity
+                style={style.button}
+                onPress={() => {
+                  navigation.navigate("add-card", { deckId: deck.id });
+                }}
+              >
+                <Text style={{ fontSize: 25 }}>Add Card</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={style.button1}>
+                <Text
+                  style={{ fontSize: 25, color: "white" }}
+                  onPress={() =>
+                    navigation.navigate("quiz", { deckId: deck.id })
+                  }
+                >
+                  Start Quiz
+                </Text>
+              </TouchableOpacity>
+              <Touchable onPress={handleDeckDelete}>
+                <Text style={{ marginTop: 20, fontSize: 20, color: "red" }}>
+                  Delete Deck
+                </Text>
+              </Touchable>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
+      )}
+    </>
   );
 };
 

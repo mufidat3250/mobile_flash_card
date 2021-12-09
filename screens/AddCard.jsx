@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   View,
@@ -9,59 +9,119 @@ import {
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/core";
+import { addCard, getDeck, getDecks } from "../utils/api";
 
-const AddCard = () => {
+const AddCard = ({ route }) => {
+  const navigation = useNavigation();
+  const [deck, setDeck] = useState({});
+  const [formData, setFormData] = useState({ question: "", answer: "" });
+
+  const setField = (field, value) => {
+    setFormData((currentState) => ({
+      ...currentState,
+      [field]: value,
+    }));
+  };
+
+  console.log(route);
+  const { deckId } = route.params;
+  console.log({ deckId });
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const deckToShow = await getDeck(deckId);
+        console.log({ addCard: deckToShow });
+        setDeck(deckToShow);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+
+  const showView = Object.keys(deck) !== 0;
+
+  const handleAddCard = async () => {
+    try {
+      await addCard(deck, formData);
+      navigation.navigate("deck", { deckId: deck.id });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <View>
-      <View style={style.Wrapper}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <AntDesign color="white" size={24} name="left" />
-          <Text
-            style={{
-              fontSize: 20,
-              color: "white",
-              marginLeft: 10,
-              fontWeight: "600",
-            }}
-          >
-            Deck 1
-          </Text>
-        </View>
-        <Text
-          style={{
-            fontSize: 20,
-            color: "white",
-            marginRight: 50,
-            fontWeight: "600",
-          }}
-        >
-          Add Card
-        </Text>
+    <>
+      {showView && (
         <View>
-          <Text style={{ flex: 1 }}></Text>
-        </View>
-      </View>
-      <View style={style.textInput}>
-        <View>
-          <TextInput style={style.input} />
-        </View>
+          <View style={style.Wrapper}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <AntDesign
+                onPress={navigation.goBack}
+                color="white"
+                size={24}
+                name="left"
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: "white",
+                  marginLeft: 10,
+                  fontWeight: "600",
+                  textTransform: "capitalize",
+                }}
+              >
+                {deck.title}
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontSize: 20,
+                color: "white",
+                marginRight: 50,
+                fontWeight: "600",
+              }}
+            >
+              Add Card
+            </Text>
+            <View>
+              <Text style={{ flex: 1 }}></Text>
+            </View>
+          </View>
+          <View style={style.textInput}>
+            <View>
+              <TextInput
+                style={style.input}
+                placeholder="Question"
+                value={formData.question}
+                onChangeText={(val) => setField("question", val)}
+              />
+            </View>
 
-        <View>
-          <TextInput style={style.input} />
+            <View>
+              <TextInput
+                style={style.input}
+                placeholder="Answer"
+                value={formData.answer}
+                onChangeText={(val) => setField("answer", val)}
+              />
+            </View>
+          </View>
+          <View style={{ display: "flex", alignItems: "center" }}>
+            <TouchableOpacity style={style.button} onPress={handleAddCard}>
+              <Text style={{ textAlign: "center", fontSize: 24 }}>Submit</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <View style={{ display: "flex", alignItems: "center" }}>
-        <TouchableOpacity style={style.button}>
-          <Text style={{ textAlign: "center", fontSize: 24 }}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      )}
+    </>
   );
 };
 

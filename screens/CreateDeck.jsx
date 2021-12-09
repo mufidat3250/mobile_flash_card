@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
   View,
@@ -7,10 +7,11 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
+import { createDeck } from "../utils/api";
 // import { useNavigate } from "react-router";
 
 const CreateDeck = () => {
-  //   const navigate = useNavigate();
+  const [title, setTitle] = useState("");
   return (
     <View style={style.Wrapper}>
       <View>
@@ -24,7 +25,7 @@ const CreateDeck = () => {
         <View style={{ marginTop: 60 }}>
           <TextInput
             style={{
-              backgroundColor: "red",
+              backgroundColor: "lightgray",
               padding: 10,
               borderRadius: 20,
               marginLeft: 20,
@@ -33,10 +34,17 @@ const CreateDeck = () => {
               color: "white",
               fontSize: 20,
             }}
+            placeholder="Deck Title"
+            value={title}
+            onChangeText={(val) => setTitle(val)}
           />
         </View>
 
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity
+          onPress={() => {
+            createDeck(title);
+          }}
+        >
           <Text
             style={{
               textAlign: "center",

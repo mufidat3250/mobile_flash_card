@@ -14,17 +14,18 @@ const BottomTabs = () => {
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ focused }) => {
           if (route.name === "Home") {
-            return <MaterialIcons name="deck" color="pink" size={60} />;
-          } else if (route.name === "create-deck") {
-            return <MaterialIcons name="add-box" color="pink" size={60} />;
+            return <MaterialIcons name="deck" color="blue" size={30} />;
+          } else if (route.name === "Add Deck") {
+            return <MaterialIcons name="add-box" color="blue" size={30} />;
           }
         },
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="create-deck" component={CreateDeck} />
+      <Tab.Screen name="Add Deck" component={CreateDeck} />
     </Tab.Navigator>
   );
 };
