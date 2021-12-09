@@ -105,11 +105,11 @@ const Deck = ({ route }) => {
                   Start Quiz
                 </Text>
               </TouchableOpacity>
-              <Touchable onPress={handleDeckDelete}>
+              <TouchableOpacity onPress={handleDeckDelete}>
                 <Text style={{ marginTop: 20, fontSize: 20, color: "red" }}>
                   Delete Deck
                 </Text>
-              </Touchable>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
