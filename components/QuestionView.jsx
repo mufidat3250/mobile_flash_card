@@ -12,8 +12,10 @@ import { getDeck } from "../utils/api";
 const QuestionView = ({ deck: { questions, id }, navigation }) => {
   const [activeQuestionOption, setActiveQuestionOption] = useState(0);
   const [showType, setShowType] = useState("question");
+  const [selectedAnswer, setSelectedAnswer] = useState([]);
 
   const showText = showType === "question" ? "Answer" : "Question";
+  console.log({ questions });
 
   const questionToShow = questions[activeQuestionOption];
 
@@ -22,14 +24,35 @@ const QuestionView = ({ deck: { questions, id }, navigation }) => {
       currentType === "answer" ? "question" : "answer"
     );
   };
-  const handleQuestionView = () => {
+  const handleScore = (selected) => {
+    return questions.filter(
+      (question, questionIndex) =>
+        question.answer.toLowerCase() === selected[questionIndex].toLowerCase()
+    ).length;
+  };
+  const handleQuestionView = (answer) => {
+    console.log("quiz view");
+    console.log({ activeQuestionOption });
+    console.log({ questionsLength: questions.length - 1 });
     if (activeQuestionOption === questions.length - 1) {
-      navigation.navigate("quiz-result");
+      // selectedAnswer.push(answer);
+      // setSelectedAnswer((currentState) => currentState.concat(answer));
+      const selected = [...selectedAnswer, answer];
+
+      console.log({ selected });
+      console.log("hereeeeee");
+      setActiveQuestionOption(0);
+      navigation.navigate("quiz-result", {
+        deckId: id,
+        questionsLength: questions.length,
+        score: handleScore(selected),
+      });
       return;
     }
 
     setActiveQuestionOption((currentType) => currentType + 1);
     showType === "answer" && setShowType("question");
+    setSelectedAnswer((currentState) => currentState.concat(answer));
   };
 
   return (
@@ -70,12 +93,18 @@ const QuestionView = ({ deck: { questions, id }, navigation }) => {
             {showText}
           </Text>
         </TouchableNativeFeedback>
-        <TouchableOpacity style={style.button} onPress={handleQuestionView}>
+        <TouchableOpacity
+          style={style.button}
+          onPress={() => handleQuestionView("correct")}
+        >
           <Text style={{ fontSize: 20, color: "white", textAlign: "center" }}>
             Correct
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={style.button2} onPress={handleQuestionView}>
+        <TouchableOpacity
+          style={style.button2}
+          onPress={() => handleQuestionView("incorrect")}
+        >
           <Text style={{ fontSize: 20, color: "white" }}>Incorrect</Text>
         </TouchableOpacity>
       </View>

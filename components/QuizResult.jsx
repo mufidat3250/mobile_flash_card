@@ -1,7 +1,15 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-const QuizResult = () => {
+import { useNavigation } from "@react-navigation/native";
+const QuizResult = ({ route }) => {
+  const navigation = useNavigation();
+
+  const { deckId, score, questionsLength } = route.params;
+  console.log({ deckId, score, questionsLength });
+
+  const percentage = (score / questionsLength) * 100;
+
   return (
     <View>
       <View
@@ -13,7 +21,7 @@ const QuizResult = () => {
           padding: 15,
         }}
       >
-        <TouchableOpacity>
+        <TouchableOpacity onPress={navigation.goBack}>
           <AntDesign color="white" size={24} name="left" />
         </TouchableOpacity>
         <Text
@@ -45,23 +53,31 @@ const QuizResult = () => {
             }}
           >
             {" "}
-            1/4 Correct
+            {`${score}/${questionsLength}`} Correct
           </Text>
         </View>
         <View style={{ marginTop: 50, display: "flex", alignItems: "center" }}>
           <Text style={{ color: "black", fontSize: 30 }}>
             Percentage correct
           </Text>
-          <Text style={{ color: "red", fontSize: 30 }}>25%</Text>
+          <Text style={{ color: "red", fontSize: 30 }}>
+            {percentage.toFixed(2)}%
+          </Text>
         </View>
 
         <View style={{ display: "flex", alignItems: "center", marginTop: 50 }}>
-          <TouchableOpacity style={style.restart}>
+          <TouchableOpacity
+            style={style.restart}
+            onPress={() => navigation.navigate("quiz", { deckId })}
+          >
             <Text style={{ textAlign: "center", color: "white", fontSize: 20 }}>
               Restart Quiz
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.back}>
+          <TouchableOpacity
+            style={style.back}
+            onPress={() => navigation.navigate("deck", { deckId })}
+          >
             <Text style={{ textAlign: "center", fontSize: 20 }}>
               Back to Deck
             </Text>
